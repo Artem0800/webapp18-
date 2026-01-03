@@ -557,7 +557,7 @@
       filters.style.display = "flex"; // ← ФИЛЬТРЫ ВКЛЮЧАЮТСЯ
   
       try {
-        const response = await fetch(`Scraping/sorted_json/${fileName}.json`);
+        const response = await fetch(`sorted_json/${fileName}.json`);
         allProducts = await response.json();
   
         applyFilters(); // ← ЗАПУСК ФИЛЬТРАЦИИ
@@ -705,4 +705,5 @@
     });
   </script>
 </body>
+
 </html>
