@@ -657,7 +657,7 @@
           };
 
           try {
-            const r = await fetch("http://127.0.0.1:8000/add_to_cart", {
+            const r = await fetch("http://192.168.0.104:8000/add_to_cart", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(payload)
@@ -707,3 +707,4 @@
 </body>
 
 </html>
+
