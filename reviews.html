@@ -460,14 +460,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             showToast('Спасибо! Отзыв отправлен');
 
-            tg.close();
             
-            // // Сброс формы
-            // textarea.value = '';
-            // photoInput.value = '';
-            // starInputs.forEach(i => i.checked = false);
-            // preview.style.display = 'none';
-            // uploadText.textContent = 'Добавить фотографию';
+            // Сброс формы
+            textarea.value = '';
+            photoInput.value = '';
+            starInputs.forEach(i => i.checked = false);
+            preview.style.display = 'none';
+            uploadText.textContent = 'Добавить фотографию';
 
         } catch (err) {
             showToast('Ошибка. Проверьте соединение с сервером');
@@ -479,4 +478,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 </body>
+
 </html>
