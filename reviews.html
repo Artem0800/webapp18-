@@ -366,16 +366,7 @@ main {
 </main>
 <div id="toast" class="toast"></div>
 <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
   
-    /* имя пользователя */
-    let userName = "Гость";
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-      userName = tg.initDataUnsafe.user.first_name;
-    }
-    document.getElementById("user-name").textContent = userName;
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -481,4 +472,5 @@ document.addEventListener('DOMContentLoaded', () => {
 </body>
 
 </html>
+
 
