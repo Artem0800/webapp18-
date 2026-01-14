@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Оставить отзыв</title>
+<style>
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: #1e1e1e;
+  margin: 0;
+  padding: 0;
+  color: #f0f0f0;
+}
+
+main {
+  max-width: 700px;
+  margin: 60px auto;
+  padding: 30px;
+  background: #2a2a2a;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.4);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+/* ===== ЗВЕЗДЫ ===== */
+.rating {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 25px;
+}
+
+.rating input {
+  display: none;
+}
+
+.rating label {
+  font-size: 34px;
+  color: #555;
+  cursor: pointer;
+  transition: color .25s ease, transform .25s ease;
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: starIn 0.5s ease forwards;
+}
+
+.rating label:nth-child(2) { animation-delay: .05s; }
+.rating label:nth-child(4) { animation-delay: .1s; }
+.rating label:nth-child(6) { animation-delay: .15s; }
+.rating label:nth-child(8) { animation-delay: .2s; }
+.rating label:nth-child(10){ animation-delay: .25s; }
+
+.rating label:hover,
+.rating label:hover ~ label {
+  color: #ff4081;
+  transform: translateY(-4px) scale(1.1);
+}
+
+.rating input:checked ~ label {
+  color: #ff4081;
+}
+
+.rating input {
+  display: none;
+}
+
+.rating label {
+  font-size: 34px;
+  color: #555;
+  cursor: pointer;
+  transition: color .2s ease, transform .2s ease;
+}
+
+.rating label:hover,
+.rating label:hover ~ label {
+  color: #ff4081;
+}
+
+.rating input:checked ~ label {
+  color: #ff4081;
+}
+
+/* ===== ФОРМА ===== */
+.form-group {
+  margin-bottom: 20px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 120px;
+  background: #1e1e1e;
+  border: 1px solid #444;
+  border-radius: 12px;
+  padding: 14px;
+  color: #fff;
+  font-size: 15px;
+  resize: vertical;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #ff4081;
+}
+
+/* ===== ФОТО ===== */
+input[type="file"] {
+  width: 100%;
+  background: #1e1e1e;
+  border: 1px dashed #555;
+  border-radius: 12px;
+  padding: 16px;
+  color: #ccc;
+  cursor: pointer;
+}
+
+.preview {
+  margin-top: 15px;
+  display: none;
+}
+
+.preview img {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.4);
+}
+
+/* ===== КНОПКА ===== */
+button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(90deg, #ff4081, #c2185b);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(255,64,129,.35);
+  transition: transform .2s ease, filter .2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+@keyframes starIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes formIn {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+main {
+  animation: formIn 1.5s ease forwards;
+}
+
+/* ===== КРАСИВАЯ КНОПКА ДОБАВЛЕНИЯ ФОТО ===== */
+.file-upload {
+  position: relative;
+  width: 100%;
+}
+
+.file-upload input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-upload-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 16px;
+  border-radius: 14px;
+
+  background: linear-gradient(135deg, #ff4081, #c2185b);
+  color: #fff;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  box-shadow: 0 8px 25px rgba(255,64,129,.35);
+  cursor: pointer;
+
+  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+
+/* hover — как у кнопки */
+.file-upload-label:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 12px 30px rgba(255,64,129,.45);
+}
+
+/* НАЖАТИЕ — эффект клика */
+.file-upload-label:active {
+  transform: scale(0.96);
+  box-shadow: 0 6px 15px rgba(255,64,129,.35);
+}
+
+.file-upload-label span.icon {
+  font-size: 20px;
+}
+
+/* ===== PREVIEW С АНИМАЦИЕЙ ===== */
+.preview {
+  position: relative;
+  margin-top: 15px;
+  display: none;
+  animation: previewIn .4s ease forwards;
+}
+
+@keyframes previewIn {
+  from {
+    opacity: 0;
+    transform: scale(.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.preview img {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.4);
+}
+
+/* ===== КНОПКА УДАЛЕНИЯ ФОТО ===== */
+.remove-photo {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+
+  background: rgba(255,64,129,.45);
+  color: #fff;
+  border: none;
+
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: background .2s ease, transform .2s ease;
+}
+
+.remove-photo:hover {
+  background: #ff4081;
+  transform: scale(1.1);
+}
+
+/* ===== DRAG & DROP ===== */
+.file-upload-label.dragover {
+  background: linear-gradient(135deg, #ff4081, #ff6fa1);
+  box-shadow: 0 12px 30px rgba(255,64,129,.6);
+}
+
+/* ===== ПРОЗРАЧНАЯ КНОПКА ДОБАВЛЕНИЯ ФОТО ===== */
+.file-upload-label {
+  background: transparent;
+  border: 2px dashed rgba(255, 255, 255, 0.25);
+  color: #ccc;
+  box-shadow: none;
+
+  transition:
+    border-color .25s ease,
+    color .25s ease,
+    background .25s ease,
+    transform .2s ease;
+}
+
+/* hover — мягкое свечение */
+.file-upload-label:hover {
+  background: rgba(255, 64, 129, 0.08);
+  border-color: #ff4081;
+  color: #ff4081;
+  transform: translateY(-2px);
+}
+
+/* нажатие — эффект клика */
+.file-upload-label:active {
+  transform: scale(0.97);
+}
+
+.toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: linear-gradient(135deg, #ff4081, #ff4081);
+      color: #fff;
+      padding: 14px 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      font-size: 15px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.35s ease;
+      z-index: 9999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+</style>
+</head>
+<body>
+
+<main>
+  <h1>Оставить отзыв</h1>
+
+  <div class="rating">
+    <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
+    <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
+    <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
+    <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
+    <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
+  </div>
+
+  <div class="form-group">
+    <textarea class="review-textarea" placeholder="Напишите ваш отзыв..."></textarea>
+  </div>
+
+  <div class="form-group">
+    <div class="file-upload">
+      <label for="photo" class="file-upload-label" id="uploadLabel">
+        <span class="icon">📸</span>
+        <span id="uploadText">Добавить фотографию</span>
+      </label>
+      <input type="file" accept="image/*" id="photo">
+    </div>
+    <div class="preview" id="preview"></div>
+  </div>
+
+  <button type="button" id="submitBtn">Отправить отзыв</button>
+</main>
+<div id="toast" class="toast"></div>
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+  
+    /* имя пользователя */
+    let userName = "Гость";
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+      userName = tg.initDataUnsafe.user.first_name;
+    }
+    document.getElementById("user-name").textContent = userName;
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const photoInput = document.getElementById('photo');
+    const preview = document.getElementById('preview');
+    const uploadText = document.getElementById('uploadText');
+    const textarea = document.querySelector('.review-textarea');
+    const submitButton = document.getElementById('submitBtn');
+    const toast = document.getElementById('toast');
+
+    // ФУНКЦИЯ ВЫЗОВА TOAST
+    function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 1550);
+    }
+
+    function showImage(file) {
+        preview.innerHTML = '';
+        if (!file.type.startsWith('image/')) {
+            showToast('Можно загружать только изображения');
+            return;
+        }
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-photo';
+        removeBtn.innerHTML = '×';
+        removeBtn.onclick = () => {
+            photoInput.value = '';
+            preview.style.display = 'none';
+            uploadText.textContent = 'Добавить фотографию';
+        };
+        preview.appendChild(img);
+        preview.appendChild(removeBtn);
+        preview.style.display = 'block';
+        uploadText.textContent = 'Фото выбрано';
+    }
+
+    photoInput.addEventListener('change', () => {
+        if (photoInput.files[0]) showImage(photoInput.files[0]);
+    });
+
+    submitButton.addEventListener('click', async () => {
+        const starInputs = document.querySelectorAll('input[name="rating"]');
+        let ratingValue = '';
+        starInputs.forEach(input => { if (input.checked) ratingValue = input.value; });
+
+        const text = textarea.value.trim();
+
+        if (!ratingValue) return showToast('Пожалуйста, выберите оценку');
+        if (!text) return showToast('Пожалуйста, напишите текст отзыва');
+
+        let imgBase64 = '';
+        if (photoInput.files[0]) {
+            const reader = new FileReader();
+            imgBase64 = await new Promise(r => {
+                reader.onload = () => r(reader.result);
+                reader.readAsDataURL(photoInput.files[0]);
+            });
+        }
+
+        const reviewData = {
+            count_reviews: ratingValue.toString(), // В вашей модели это str
+            text: text,
+            img: imgBase64,
+            username: userName
+        };
+
+        try {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Отправка...';
+
+            const response = await fetch('http://127.0.0.1:8000/add_to_reviews', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reviewData)
+            });
+
+            if (!response.ok) throw new Error();
+
+            showToast('Спасибо! Отзыв отправлен');
+
+            tg.close();
+            
+            // // Сброс формы
+            // textarea.value = '';
+            // photoInput.value = '';
+            // starInputs.forEach(i => i.checked = false);
+            // preview.style.display = 'none';
+            // uploadText.textContent = 'Добавить фотографию';
+
+        } catch (err) {
+            showToast('Ошибка. Проверьте соединение с сервером');
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Отправить отзыв';
+        }
+    });
+});
+</script>
+</body>
+</html>
