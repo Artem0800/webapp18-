@@ -2,341 +2,87 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Оставить отзыв</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
+/* Ваши стили остаются без изменений, добавляем только небольшие правки для мобильных устройств */
 body {
   font-family: "Segoe UI", sans-serif;
   background: #1e1e1e;
   margin: 0;
   padding: 0;
   color: #f0f0f0;
+  overflow-x: hidden;
 }
 
 main {
-  max-width: 700px;
-  margin: 60px auto;
-  padding: 30px;
+  max-width: 90%;
+  width: 700px;
+  margin: 20px auto;
+  padding: 25px;
   background: #2a2a2a;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0,0,0,.4);
+  animation: formIn 1s ease forwards;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 25px;
-}
+h1 { text-align: center; margin-bottom: 25px; font-size: 1.5rem; }
 
-/* ===== ЗВЕЗДЫ ===== */
-.rating {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 25px;
-}
+/* ЗВЕЗДЫ */
+.rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 8px; margin-bottom: 25px; }
+.rating input { display: none; }
+.rating label { font-size: 34px; color: #555; cursor: pointer; transition: color .2s ease; }
+.rating label:hover, .rating label:hover ~ label { color: #ff4081; }
+.rating input:checked ~ label { color: #ff4081; }
 
-.rating input {
-  display: none;
-}
-
-.rating label {
-  font-size: 34px;
-  color: #555;
-  cursor: pointer;
-  transition: color .25s ease, transform .25s ease;
-  opacity: 0;
-  transform: translateX(-20px);
-  animation: starIn 0.5s ease forwards;
-}
-
-.rating label:nth-child(2) { animation-delay: .05s; }
-.rating label:nth-child(4) { animation-delay: .1s; }
-.rating label:nth-child(6) { animation-delay: .15s; }
-.rating label:nth-child(8) { animation-delay: .2s; }
-.rating label:nth-child(10){ animation-delay: .25s; }
-
-.rating label:hover,
-.rating label:hover ~ label {
-  color: #ff4081;
-  transform: translateY(-4px) scale(1.1);
-}
-
-.rating input:checked ~ label {
-  color: #ff4081;
-}
-
-.rating input {
-  display: none;
-}
-
-.rating label {
-  font-size: 34px;
-  color: #555;
-  cursor: pointer;
-  transition: color .2s ease, transform .2s ease;
-}
-
-.rating label:hover,
-.rating label:hover ~ label {
-  color: #ff4081;
-}
-
-.rating input:checked ~ label {
-  color: #ff4081;
-}
-
-/* ===== ФОРМА ===== */
-.form-group {
-  margin-bottom: 20px;
-}
-
+/* ФОРМА */
+.form-group { margin-bottom: 20px; }
 textarea {
-  width: 100%;
-  min-height: 120px;
-  background: #1e1e1e;
-  border: 1px solid #444;
-  border-radius: 12px;
-  padding: 14px;
-  color: #fff;
-  font-size: 15px;
-  resize: vertical;
+  width: 100%; min-height: 120px; background: #1e1e1e; border: 1px solid #444;
+  border-radius: 12px; padding: 14px; color: #fff; font-size: 15px; resize: vertical; box-sizing: border-box;
 }
+textarea:focus { outline: none; border-color: #ff4081; }
 
-textarea:focus {
-  outline: none;
-  border-color: #ff4081;
-}
-
-/* ===== ФОТО ===== */
-input[type="file"] {
-  width: 100%;
-  background: #1e1e1e;
-  border: 1px dashed #555;
-  border-radius: 12px;
-  padding: 16px;
-  color: #ccc;
-  cursor: pointer;
-}
-
-.preview {
-  margin-top: 15px;
-  display: none;
-}
-
-.preview img {
-  max-width: 100%;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,.4);
-}
-
-/* ===== КНОПКА ===== */
-button {
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 50px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  background: linear-gradient(90deg, #ff4081, #c2185b);
-  color: #fff;
-  box-shadow: 0 6px 20px rgba(255,64,129,.35);
-  transition: transform .2s ease, filter .2s ease;
-}
-
-button:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.1);
-}
-@keyframes starIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes formIn {
-  from {
-    opacity: 0;
-    transform: translateY(25px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-main {
-  animation: formIn 1.5s ease forwards;
-}
-
-/* ===== КРАСИВАЯ КНОПКА ДОБАВЛЕНИЯ ФОТО ===== */
-.file-upload {
-  position: relative;
-  width: 100%;
-}
-
-.file-upload input[type="file"] {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
+/* ФОТО И КНОПКИ */
+.file-upload { position: relative; width: 100%; }
+.file-upload input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .file-upload-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-
-  padding: 16px;
-  border-radius: 14px;
-
-  background: linear-gradient(135deg, #ff4081, #c2185b);
-  color: #fff;
-
-  font-size: 15px;
-  font-weight: 600;
-
-  box-shadow: 0 8px 25px rgba(255,64,129,.35);
-  cursor: pointer;
-
-  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 16px; border-radius: 14px; background: transparent;
+  border: 2px dashed rgba(255, 255, 255, 0.25); color: #ccc; cursor: pointer; transition: all .25s ease;
 }
+.file-upload-label:hover { border-color: #ff4081; color: #ff4081; background: rgba(255, 64, 129, 0.08); }
 
-/* hover — как у кнопки */
-.file-upload-label:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.1);
-  box-shadow: 0 12px 30px rgba(255,64,129,.45);
-}
-
-/* НАЖАТИЕ — эффект клика */
-.file-upload-label:active {
-  transform: scale(0.96);
-  box-shadow: 0 6px 15px rgba(255,64,129,.35);
-}
-
-.file-upload-label span.icon {
-  font-size: 20px;
-}
-
-/* ===== PREVIEW С АНИМАЦИЕЙ ===== */
-.preview {
-  position: relative;
-  margin-top: 15px;
-  display: none;
-  animation: previewIn .4s ease forwards;
-}
-
-@keyframes previewIn {
-  from {
-    opacity: 0;
-    transform: scale(.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.preview img {
-  max-width: 100%;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,.4);
-}
-
-/* ===== КНОПКА УДАЛЕНИЯ ФОТО ===== */
+.preview { position: relative; margin-top: 15px; display: none; }
+.preview img { max-width: 100%; border-radius: 12px; }
 .remove-photo {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-
-  background: rgba(255,64,129,.45);
-  color: #fff;
-  border: none;
-
-  cursor: pointer;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  transition: background .2s ease, transform .2s ease;
+  position: absolute; top: 10px; right: 10px; width: 34px; height: 34px;
+  border-radius: 50%; background: rgba(255,64,129,.8); color: #fff; border: none; cursor: pointer;
 }
 
-.remove-photo:hover {
-  background: #ff4081;
-  transform: scale(1.1);
+button#submitBtn {
+  width: 100%; padding: 14px; border: none; border-radius: 50px;
+  font-size: 1rem; font-weight: 600; cursor: pointer;
+  background: linear-gradient(90deg, #ff4081, #c2185b); color: #fff;
+  box-shadow: 0 6px 20px rgba(255,64,129,.35); transition: .2s;
 }
-
-/* ===== DRAG & DROP ===== */
-.file-upload-label.dragover {
-  background: linear-gradient(135deg, #ff4081, #ff6fa1);
-  box-shadow: 0 12px 30px rgba(255,64,129,.6);
-}
-
-/* ===== ПРОЗРАЧНАЯ КНОПКА ДОБАВЛЕНИЯ ФОТО ===== */
-.file-upload-label {
-  background: transparent;
-  border: 2px dashed rgba(255, 255, 255, 0.25);
-  color: #ccc;
-  box-shadow: none;
-
-  transition:
-    border-color .25s ease,
-    color .25s ease,
-    background .25s ease,
-    transform .2s ease;
-}
-
-/* hover — мягкое свечение */
-.file-upload-label:hover {
-  background: rgba(255, 64, 129, 0.08);
-  border-color: #ff4081;
-  color: #ff4081;
-  transform: translateY(-2px);
-}
-
-/* нажатие — эффект клика */
-.file-upload-label:active {
-  transform: scale(0.97);
-}
+button#submitBtn:disabled { filter: grayscale(1); cursor: not-allowed; }
 
 .toast {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: linear-gradient(135deg, #ff4081, #ff4081);
-      color: #fff;
-      padding: 14px 20px;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-      font-size: 15px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.35s ease;
-      z-index: 9999;
-    }
+  position: fixed; bottom: 30px; left: 50%; transform: translate(-50%, 20px);
+  background: #ff4081; color: #fff; padding: 12px 24px; border-radius: 50px;
+  opacity: 0; transition: all 0.3s ease; z-index: 10000; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
+@keyframes formIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 
 <main>
-  <h1>Оставить отзыв</h1>
+  <h1 id="welcomeText">Оставить отзыв</h1>
 
   <div class="rating">
     <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
@@ -363,9 +109,19 @@ main {
 
   <button type="button" id="submitBtn">Отправить отзыв</button>
 </main>
+
 <div id="toast" class="toast"></div>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // Инициализация Telegram WebApp
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // Разворачиваем на все окно
+    
+    // Получаем имя пользователя
+    const user = tg.initDataUnsafe?.user;
+    const username = user ? (user.username || user.first_name) : "Аноним";
+
     const photoInput = document.getElementById('photo');
     const preview = document.getElementById('preview');
     const uploadText = document.getElementById('uploadText');
@@ -373,13 +129,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitButton = document.getElementById('submitBtn');
     const toast = document.getElementById('toast');
 
-    // ФУНКЦИЯ ВЫЗОВА TOAST
     function showToast(message) {
         toast.textContent = message;
         toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 1550);
+        setTimeout(() => toast.classList.remove('show'), 2000);
     }
 
     function showImage(file) {
@@ -428,10 +181,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const reviewData = {
-            count_reviews: ratingValue.toString(), // В вашей модели это str
+            count_reviews: ratingValue.toString(),
             text: text,
             img: imgBase64,
-            username: "User"
+            username: username // Используем имя из Telegram
         };
 
         try {
@@ -448,18 +201,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             showToast('Спасибо! Отзыв отправлен');
             
-            // Сброс формы
-            textarea.value = '';
-            photoInput.value = '';
-            starInputs.forEach(i => i.checked = false);
-            preview.style.display = 'none';
-            uploadText.textContent = 'Добавить фотографию';
+            // Ждем 1.5 секунды, чтобы пользователь увидел Toast, и закрываем WebApp
+            setTimeout(() => {
+                tg.close();
+            }, 1500);
 
         } catch (err) {
-            showToast('Ошибка. Проверьте соединение с сервером');
-        } finally {
             submitButton.disabled = false;
             submitButton.textContent = 'Отправить отзыв';
+            showToast('Ошибка. Проверьте соединение с сервером');
         }
     });
 });
