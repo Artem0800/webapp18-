@@ -2,87 +2,245 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Оставить отзыв</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-/* Ваши стили остаются без изменений, добавляем только небольшие правки для мобильных устройств */
-body {
-  font-family: "Segoe UI", sans-serif;
-  background: #1e1e1e;
-  margin: 0;
-  padding: 0;
-  color: #f0f0f0;
-  overflow-x: hidden;
+  :root {
+    --primary-gradient: linear-gradient(90deg, #ff4081, #c2185b);
+    --bg-dark: #1e1e1e;
+    --card-bg: #2a2a2a;
+    --text-color: #f0f0f0;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg-dark);
+    margin: 0;
+    padding: 0;
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+  }
+
+  main {
+    width: 100%;
+    max-width: 500px; /* Оптимально для WebApp */
+    margin: 20px 15px;
+    padding: 25px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.4);
+    box-sizing: border-box;
+    animation: formIn 0.8s ease-out;
+  }
+
+  h1 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  /* РЕЙТИНГ (АДАПТИВНЫЙ) */
+  .rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 25px;
+  }
+
+  .rating input { display: none; }
+
+  .rating label {
+    font-size: clamp(30px, 8vw, 42px); /* Размер звезд меняется от ширины экрана */
+    color: #444;
+    cursor: pointer;
+    transition: color .2s, transform .2s;
+  }
+
+  .rating label:hover,
+  .rating label:hover ~ label,
+  .rating input:checked ~ label {
+    color: #ff4081;
+  }
+
+  /* ТЕКСТОВОЕ ПОЛЕ */
+  .form-group { margin-bottom: 18px; }
+
+  textarea {
+    width: 100%;
+    min-height: 100px;
+    background: #141414;
+    border: 1px solid #444;
+    border-radius: 12px;
+    padding: 15px;
+    color: #fff;
+    font-size: 16px; /* 16px предотвращает авто-зум в iOS */
+    resize: none;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: #ff4081;
+  }
+
+  /* ЗАГРУЗКА ФОТО */
+  .file-upload-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    color: #aaa;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .file-upload-label:active {
+    background: rgba(255, 64, 129, 0.1);
+    border-color: #ff4081;
+  }
+
+  #photo { display: none; }
+
+  /* ПРЕВЬЮ */
+  .preview {
+    margin-top: 15px;
+    position: relative;
+    display: none;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .preview img {
+    width: 100%;
+    display: block;
+    height: auto;
+    max-height: 300px;
+    object-fit: cover;
+  }
+
+  .remove-photo {
+
+position: absolute;
+
+top: 10px;
+
+right: 10px;
+
+
+
+width: 34px;
+
+height: 34px;
+
+border-radius: 50%;
+
+
+
+background: rgba(255,64,129,.45);
+
+color: #fff;
+
+border: none;
+
+
+
+cursor: pointer;
+
+font-size: 18px;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+
+
+transition: background .2s ease, transform .2s ease;
+
 }
 
-main {
-  max-width: 90%;
-  width: 700px;
-  margin: 20px auto;
-  padding: 25px;
-  background: #2a2a2a;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.4);
-  animation: formIn 1s ease forwards;
+
+
+.remove-photo:hover {
+
+background: #ff4081;
+
+transform: scale(1.1);
+
 }
 
-h1 { text-align: center; margin-bottom: 25px; font-size: 1.5rem; }
+  /* КНОПКА ОТПРАВКИ */
+  #submitBtn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    background: var(--primary-gradient);
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 4px 15px rgba(255, 64, 129, 0.3);
+    -webkit-tap-highlight-color: transparent;
+  }
 
-/* ЗВЕЗДЫ */
-.rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 8px; margin-bottom: 25px; }
-.rating input { display: none; }
-.rating label { font-size: 34px; color: #555; cursor: pointer; transition: color .2s ease; }
-.rating label:hover, .rating label:hover ~ label { color: #ff4081; }
-.rating input:checked ~ label { color: #ff4081; }
+  #submitBtn:active { transform: scale(0.98); opacity: 0.9; }
+  #submitBtn:disabled { filter: grayscale(1); opacity: 0.6; }
 
-/* ФОРМА */
-.form-group { margin-bottom: 20px; }
-textarea {
-  width: 100%; min-height: 120px; background: #1e1e1e; border: 1px solid #444;
-  border-radius: 12px; padding: 14px; color: #fff; font-size: 15px; resize: vertical; box-sizing: border-box;
-}
-textarea:focus { outline: none; border-color: #ff4081; }
+  /* УВЕДОМЛЕНИЕ */
+  .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: linear-gradient(135deg, #ff4081, #ff4081);
+      color: #fff;
+      padding: 14px 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      font-size: 15px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.35s ease;
+      z-index: 9999;
+    }
 
-/* ФОТО И КНОПКИ */
-.file-upload { position: relative; width: 100%; }
-.file-upload input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-.file-upload-label {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  padding: 16px; border-radius: 14px; background: transparent;
-  border: 2px dashed rgba(255, 255, 255, 0.25); color: #ccc; cursor: pointer; transition: all .25s ease;
-}
-.file-upload-label:hover { border-color: #ff4081; color: #ff4081; background: rgba(255, 64, 129, 0.08); }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-.preview { position: relative; margin-top: 15px; display: none; }
-.preview img { max-width: 100%; border-radius: 12px; }
-.remove-photo {
-  position: absolute; top: 10px; right: 10px; width: 34px; height: 34px;
-  border-radius: 50%; background: rgba(255,64,129,.8); color: #fff; border: none; cursor: pointer;
-}
+  /* АНИМАЦИЯ */
+  @keyframes formIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-button#submitBtn {
-  width: 100%; padding: 14px; border: none; border-radius: 50px;
-  font-size: 1rem; font-weight: 600; cursor: pointer;
-  background: linear-gradient(90deg, #ff4081, #c2185b); color: #fff;
-  box-shadow: 0 6px 20px rgba(255,64,129,.35); transition: .2s;
-}
-button#submitBtn:disabled { filter: grayscale(1); cursor: not-allowed; }
-
-.toast {
-  position: fixed; bottom: 30px; left: 50%; transform: translate(-50%, 20px);
-  background: #ff4081; color: #fff; padding: 12px 24px; border-radius: 50px;
-  opacity: 0; transition: all 0.3s ease; z-index: 10000; pointer-events: none;
-}
-.toast.show { opacity: 1; transform: translate(-50%, 0); }
-
-@keyframes formIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  /* АДАПТАЦИЯ ДЛЯ СОВСЕМ МАЛЕНЬКИХ ЭКРАНОВ */
+  @media (max-height: 600px) {
+    main { margin: 10px 15px; padding: 15px; }
+    h1 { font-size: 1.2rem; margin-bottom: 15px; }
+    .rating { margin-bottom: 15px; }
+  }
 </style>
 </head>
 <body>
 
 <main>
-  <h1 id="welcomeText">Оставить отзыв</h1>
+  <h1 id="title">Отзыв о заказе</h1>
 
   <div class="rating">
     <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
@@ -93,126 +251,119 @@ button#submitBtn:disabled { filter: grayscale(1); cursor: not-allowed; }
   </div>
 
   <div class="form-group">
-    <textarea class="review-textarea" placeholder="Напишите ваш отзыв..."></textarea>
+    <textarea class="review-textarea" placeholder="Поделитесь впечатлениями..."></textarea>
   </div>
 
   <div class="form-group">
     <div class="file-upload">
       <label for="photo" class="file-upload-label" id="uploadLabel">
         <span class="icon">📸</span>
-        <span id="uploadText">Добавить фотографию</span>
+        <span id="uploadText">Прикрепить фото</span>
       </label>
       <input type="file" accept="image/*" id="photo">
     </div>
     <div class="preview" id="preview"></div>
   </div>
 
-  <button type="button" id="submitBtn">Отправить отзыв</button>
+  <button type="button" id="submitBtn">Отправить</button>
 </main>
 
 <div id="toast" class="toast"></div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    // Инициализация Telegram WebApp
-    const tg = window.Telegram.WebApp;
-    tg.expand(); // Разворачиваем на все окно
-    
-    // Получаем имя пользователя
-    const user = tg.initDataUnsafe?.user;
-    const username = user ? (user.username || user.first_name) : "Аноним";
+  const tg = window.Telegram.WebApp;
+  tg.expand();
+  tg.ready();
 
-    const photoInput = document.getElementById('photo');
-    const preview = document.getElementById('preview');
-    const uploadText = document.getElementById('uploadText');
-    const textarea = document.querySelector('.review-textarea');
-    const submitButton = document.getElementById('submitBtn');
-    const toast = document.getElementById('toast');
+  const photoInput = document.getElementById('photo');
+  const preview = document.getElementById('preview');
+  const uploadText = document.getElementById('uploadText');
+  const textarea = document.querySelector('.review-textarea');
+  const submitButton = document.getElementById('submitBtn');
+  const toast = document.getElementById('toast');
 
-    function showToast(message) {
-        toast.textContent = message;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2000);
-    }
+  // Получаем имя пользователя из Telegram
+  const username = tg.initDataUnsafe?.user?.username || 
+                   tg.initDataUnsafe?.user?.first_name || 
+                   "Anonymous";
 
-    function showImage(file) {
-        preview.innerHTML = '';
-        if (!file.type.startsWith('image/')) {
-            showToast('Можно загружать только изображения');
-            return;
-        }
-        const img = document.createElement('img');
-        img.src = URL.createObjectURL(file);
-        const removeBtn = document.createElement('button');
-        removeBtn.className = 'remove-photo';
-        removeBtn.innerHTML = '×';
-        removeBtn.onclick = () => {
-            photoInput.value = '';
-            preview.style.display = 'none';
-            uploadText.textContent = 'Добавить фотографию';
-        };
-        preview.appendChild(img);
-        preview.appendChild(removeBtn);
+  function showToast(message) {
+    toast.innerText = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  photoInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) return showToast('Только изображения!');
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        preview.innerHTML = `
+          <img src="${event.target.result}">
+          <button class="remove-photo" id="removePhoto">×</button>
+        `;
         preview.style.display = 'block';
-        uploadText.textContent = 'Фото выбрано';
+        uploadText.innerText = 'Сменить фото';
+        
+        document.getElementById('removePhoto').onclick = () => {
+          photoInput.value = '';
+          preview.style.display = 'none';
+          uploadText.innerText = 'Прикрепить фото';
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  submitButton.addEventListener('click', async () => {
+    const rating = document.querySelector('input[name="rating"]:checked')?.value;
+    const text = textarea.value.trim();
+
+    if (!rating) return showToast('Поставьте оценку ★');
+    if (!text) return showToast('Напишите пару слов');
+
+    submitButton.disabled = true;
+    submitButton.innerText = 'Отправка...';
+
+    let imgBase64 = "";
+    if (photoInput.files[0]) {
+      const reader = new FileReader();
+      imgBase64 = await new Promise(r => {
+        reader.onload = () => r(reader.result);
+        reader.readAsDataURL(photoInput.files[0]);
+      });
     }
 
-    photoInput.addEventListener('change', () => {
-        if (photoInput.files[0]) showImage(photoInput.files[0]);
-    });
+    const data = {
+      count_reviews: rating,
+      text: text,
+      img: imgBase64,
+      username: username,
+      user_id: tg.initDataUnsafe?.user?.id
+    };
 
-    submitButton.addEventListener('click', async () => {
-        const starInputs = document.querySelectorAll('input[name="rating"]');
-        let ratingValue = '';
-        starInputs.forEach(input => { if (input.checked) ratingValue = input.value; });
+    try {
+      const response = await fetch('http://127.0.0.1:8000/add_to_reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
 
-        const text = textarea.value.trim();
-
-        if (!ratingValue) return showToast('Пожалуйста, выберите оценку');
-        if (!text) return showToast('Пожалуйста, напишите текст отзыва');
-
-        let imgBase64 = '';
-        if (photoInput.files[0]) {
-            const reader = new FileReader();
-            imgBase64 = await new Promise(r => {
-                reader.onload = () => r(reader.result);
-                reader.readAsDataURL(photoInput.files[0]);
-            });
-        }
-
-        const reviewData = {
-            count_reviews: ratingValue.toString(),
-            text: text,
-            img: imgBase64,
-            username: username // Используем имя из Telegram
-        };
-
-        try {
-            submitButton.disabled = true;
-            submitButton.textContent = 'Отправка...';
-
-            const response = await fetch('http://127.0.0.1:8000/add_to_reviews', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(reviewData)
-            });
-
-            if (!response.ok) throw new Error();
-
-            showToast('Спасибо! Отзыв отправлен');
-            
-            // Ждем 1.5 секунды, чтобы пользователь увидел Toast, и закрываем WebApp
-            setTimeout(() => {
-                tg.close();
-            }, 1500);
-
-        } catch (err) {
-            submitButton.disabled = false;
-            submitButton.textContent = 'Отправить отзыв';
-            showToast('Ошибка. Проверьте соединение с сервером');
-        }
-    });
-});
+      if (response.ok) {
+        tg.HapticFeedback.notificationOccurred('success');
+        setTimeout(() => tg.close(), 1500);
+      } else {
+        throw new Error();
+      }
+    } catch (e) {
+      showToast('Ошибка сервера');
+      submitButton.disabled = false;
+      submitButton.innerText = 'Отправить';
+    }
+  });
 </script>
+
 </body>
 </html>
