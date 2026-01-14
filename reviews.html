@@ -235,6 +235,78 @@ transform: scale(1.1);
     h1 { font-size: 1.2rem; margin-bottom: 15px; }
     .rating { margin-bottom: 15px; }
   }
+
+  /* Контейнер-квадрат */
+.anon-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.anon-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.anon-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.anon-desc {
+  font-size: 12px;
+  color: #777;
+}
+
+/* Стили переключателя (Switch) */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #444;
+  transition: .3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #ff4081;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
 </style>
 </head>
 <body>
@@ -254,6 +326,17 @@ transform: scale(1.1);
     <textarea class="review-textarea" placeholder="Поделитесь впечатлениями..."></textarea>
   </div>
 
+  <div class="anon-card">
+    <div class="anon-info">
+      <span class="anon-title">Анонимный отзыв</span>
+      <span class="anon-desc">Ваш username в Telegram будет скрыт</span>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="anonCheckbox">
+      <span class="slider"></span>
+    </label>
+  </div>
+
   <div class="form-group">
     <div class="file-upload">
       <label for="photo" class="file-upload-label" id="uploadLabel">
@@ -269,6 +352,8 @@ transform: scale(1.1);
 </main>
 
 <div id="toast" class="toast"></div>
+
+
 
 <script>
   const tg = window.Telegram.WebApp;
@@ -320,12 +405,16 @@ transform: scale(1.1);
   submitButton.addEventListener('click', async () => {
     const rating = document.querySelector('input[name="rating"]:checked')?.value;
     const text = textarea.value.trim();
+    const isAnonymous = document.getElementById('anonCheckbox').checked; // Проверяем галочку
 
     if (!rating) return showToast('Поставьте оценку ★');
     if (!text) return showToast('Напишите пару слов');
 
     submitButton.disabled = true;
     submitButton.innerText = 'Отправка...';
+
+    // Определяем имя: если стоит галочка — "Анонимно", если нет — берем из ТГ
+    const finalUsername = isAnonymous ? "Анонимно" : (tg.initDataUnsafe?.user?.username || tg.initDataUnsafe?.user?.first_name || "Пользователь");
 
     let imgBase64 = "";
     if (photoInput.files[0]) {
@@ -340,8 +429,10 @@ transform: scale(1.1);
       count_reviews: rating,
       text: text,
       img: imgBase64,
-      username: username
+      username: finalUsername // Отправляем итоговое имя
     };
+
+    // Далее ваш fetch запрос без изменений...
 
     try {
       const response = await fetch('http://127.0.0.1:8000/add_to_reviews', {
@@ -353,7 +444,7 @@ transform: scale(1.1);
       if (response.ok) {
         showToast(`Спасибо огромное, ${username} за отзыв ❤️`);
         tg.HapticFeedback.notificationOccurred('success');
-        setTimeout(() => tg.close(), 2000);
+        setTimeout(() => tg.close(), 1500);
       } else {
         throw new Error();
       }
@@ -367,4 +458,3 @@ transform: scale(1.1);
 
 </body>
 </html>
-
