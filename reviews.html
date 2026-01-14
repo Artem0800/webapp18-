@@ -340,8 +340,7 @@ transform: scale(1.1);
       count_reviews: rating,
       text: text,
       img: imgBase64,
-      username: username,
-      user_id: tg.initDataUnsafe?.user?.id
+      username: username
     };
 
     try {
@@ -352,6 +351,7 @@ transform: scale(1.1);
       });
 
       if (response.ok) {
+        showToast(`Спасибо огромное, ${username} за отзыв ❤️`);
         tg.HapticFeedback.notificationOccurred('success');
         setTimeout(() => tg.close(), 1500);
       } else {
