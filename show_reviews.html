@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Все отзывы</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root {
+    --bg-dark: #1e1e1e;
+    --card-bg: #2a2a2a;
+    --primary: #ff4081;
+    --text-color: #f0f0f0;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  header {
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  h1 { font-size: 1.6rem; margin: 0; }
+
+  #reviewsContainer {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .review-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  .review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .username {
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .stars {
+    color: #ffb400;
+    font-size: 1.5rem;
+  }
+
+  .review-text {
+    line-height: 1.5;
+    font-size: 0.95rem;
+    color: #ccc;
+    margin-bottom: 15px;
+    word-wrap: break-word;
+  }
+
+  .review-img {
+    width: 100%;
+    border-radius: 12px;
+    margin-top: 10px;
+    display: block;
+    cursor: pointer;
+  }
+
+  .loading-spinner {
+    margin-top: 50px;
+    border: 4px solid rgba(255,255,255,0.1);
+    border-left-color: var(--primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .empty-msg { text-align: center; color: #666; margin-top: 100px; }
+
+
+  .review-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 8px;
+  }
+
+  .review-date {
+    font-size: 1rem;
+    color: #666;
+    font-style: italic;
+  }
+
+  /* Дополнительно: чтобы текст отзыва не слипался с датой */
+  .review-text {
+    margin-bottom: 10px;
+  }
+
+  .reviews-count {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #ff4081; /* Розовый акцент как у кнопок */
+  opacity: 0.8;
+  font-weight: 500;
+  background: rgba(255, 64, 129, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: inline-block; /* Чтобы фон облегал текст */
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Отзывы покупателей</h1>
+  <div class="reviews-count" id="reviewsCount">Загрузка...</div>
+</header>
+
+<div id="loading" class="loading-spinner"></div>
+<div id="reviewsContainer"></div>
+
+<script>
+  const tg = window.Telegram.WebApp;
+  tg.expand();
+
+  async function loadReviews() {
+  const container = document.getElementById('reviewsContainer');
+  const loader = document.getElementById('loading');
+  const countElement = document.getElementById('reviewsCount'); // Ссылка на счетчик
+
+  try {
+      const response = await fetch('http://127.0.0.1:8000/get_reviews');
+      const reviews = await response.json();
+      
+      loader.style.display = 'none';
+
+      // Обновляем количество отзывов
+      const total = reviews.length;
+      countElement.innerText = `Всего отзывов: ${total}`;
+
+      if (total === 0) {
+          container.innerHTML = '<div class="empty-msg">Отзывов пока нет. Будьте первым!</div>';
+          return;
+      }
+
+        reviews.forEach(review => {
+            const card = document.createElement('div');
+            card.className = 'review-card';
+
+            // Генерируем звезды
+            const ratingNumber = parseInt(review.count_reviews) || 0;
+            const starDisplay = '★'.repeat(ratingNumber) + '☆'.repeat(5 - ratingNumber);
+            
+            const fullDate = review.data || ''; 
+            const onlyDate = fullDate.split(' ')[0];
+
+            card.innerHTML = `
+                <div class="review-header">
+                    <span class="username">@${review.username}</span>
+                    <span class="stars">${starDisplay}</span>
+                </div>
+                <div class="review-text">${review.text}</div>
+                ${review.img ? `<img src="${review.img}" class="review-img">` : ''}
+                <div class="review-footer">
+                    <span class="review-date">${onlyDate || ''}</span>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    } catch (error) {
+        loader.style.display = 'none';
+        container.innerHTML = '<div class="empty-msg">Ошибка загрузки.</div>';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', loadReviews);
+</script>
+
+</body>
+</html>
