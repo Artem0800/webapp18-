@@ -353,7 +353,7 @@ transform: scale(1.1);
       if (response.ok) {
         showToast(`Спасибо огромное, ${username} за отзыв ❤️`);
         tg.HapticFeedback.notificationOccurred('success');
-        setTimeout(() => tg.close(), 1500);
+        setTimeout(() => tg.close(), 2000);
       } else {
         throw new Error();
       }
@@ -367,3 +367,4 @@ transform: scale(1.1);
 
 </body>
 </html>
+
