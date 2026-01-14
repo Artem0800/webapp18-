@@ -414,7 +414,7 @@ input:checked + .slider:before {
     submitButton.innerText = 'Отправка...';
 
     // Определяем имя: если стоит галочка — "Анонимно", если нет — берем из ТГ
-    const finalUsername = isAnonymous ? "Анонимно" : (tg.initDataUnsafe?.user?.username || tg.initDataUnsafe?.user?.first_name || "Пользователь");
+    const finalUsername = isAnonymous ? "Аноним" : (tg.initDataUnsafe?.user?.username || tg.initDataUnsafe?.user?.first_name || "Пользователь");
 
     let imgBase64 = "";
     if (photoInput.files[0]) {
@@ -458,3 +458,4 @@ input:checked + .slider:before {
 
 </body>
 </html>
+
